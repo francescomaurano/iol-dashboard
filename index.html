@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#080c14">
+<title>IOL Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#080c14;--s1:#0f1724;--s2:#162033;--border:#1e2d47;
+  --green:#00e676;--red:#ff5252;--yellow:#ffd740;--blue:#448aff;
+  --text:#e8eaf0;--dim:#7a8aaa;--muted:#3d4f6b;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;flex-direction:column}
+
+/* HEADER */
+.hdr{background:var(--s1);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px}
+.dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hdr-right{font-size:11px;color:var(--dim);text-align:right;line-height:1.4}
+
+/* SCROLL AREA */
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:80px}
+::-webkit-scrollbar{display:none}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+.btab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px;font-size:10px;color:var(--dim);cursor:pointer;transition:color .2s;gap:3px;border:none;background:transparent;font-family:inherit}
+.btab.active{color:var(--green)}
+.btab-icon{font-size:20px}
+.badge-dot{position:absolute;top:6px;right:calc(50% - 14px);width:7px;height:7px;background:var(--red);border-radius:50%;display:none}
+
+/* PAGE */
+.page{display:none;padding:16px}
+.page.active{display:block}
+
+/* SECTION TITLE */
+.stitle{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--dim);margin-bottom:10px;margin-top:18px}
+.stitle:first-child{margin-top:0}
+
+/* SUMMARY CARDS — horizontal scroll */
+.cards-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;scrollbar-width:none}
+.cards-row::-webkit-scrollbar{display:none}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:14px 16px;min-width:140px;flex-shrink:0}
+.card-label{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px;font-weight:600}
+.card-val{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.card-sub{font-size:11px;color:var(--dim);margin-top:3px}
+.up{color:var(--green)}.down{color:var(--red)}.neu{color:var(--dim)}
+
+/* POSITION CARDS */
+.pos-list{display:flex;flex-direction:column;gap:8px}
+.pos-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.pos-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.pos-ticker{background:#0f3460;color:var(--blue);font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;letter-spacing:.3px}
+.pos-tipo{font-size:10px;color:var(--muted);background:var(--s2);padding:3px 7px;border-radius:5px}
+.pos-name{font-size:12px;color:var(--dim);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pos-nums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.pos-num{background:var(--s2);border-radius:8px;padding:8px;text-align:center}
+.pos-num-label{font-size:9px;color:var(--muted);text-transform:uppercase;margin-bottom:3px;letter-spacing:.4px}
+.pos-num-val{font-size:13px;font-weight:600}
+.pos-dia-bar{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.pos-valuacion{font-size:12px;color:var(--dim)}
+.pos-dia{font-size:14px;font-weight:700}
+.pos-del{position:absolute;top:12px;right:12px;font-size:18px;color:var(--muted);cursor:pointer;padding:4px}
+
+/* FAB */
+.fab{position:fixed;bottom:72px;right:16px;width:52px;height:52px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;box-shadow:0 4px 16px rgba(0,230,118,.3);border:none;z-index:99;transition:transform .2s}
+.fab:active{transform:scale(.9)}
+
+/* NEWS CARDS */
+.news-list{display:flex;flex-direction:column;gap:10px}
+.news-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:14px 16px;text-decoration:none;color:inherit;display:block;active:opacity:.8}
+.news-src{font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px}
+.news-title{font-size:14px;font-weight:600;line-height:1.4;margin-bottom:6px}
+.news-desc{font-size:12px;color:var(--dim);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.news-time{font-size:11px;color:var(--muted);margin-top:8px}
+
+/* FILTER PILLS */
+.pills{display:flex;gap:7px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;scrollbar-width:none}
+.pills::-webkit-scrollbar{display:none}
+.pill{font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;cursor:pointer;border:1px solid var(--border);color:var(--dim);background:transparent;white-space:nowrap;flex-shrink:0}
+.pill.active{background:var(--green);color:#000;border-color:var(--green)}
+
+/* MARKET TICKERS */
+.tickers{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;scrollbar-width:none}
+.tickers::-webkit-scrollbar{display:none}
+.ticker{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:10px 12px;min-width:90px;flex-shrink:0;text-align:center}
+.ticker-name{font-size:9px;color:var(--dim);font-weight:700;text-transform:uppercase;margin-bottom:4px}
+.ticker-val{font-size:14px;font-weight:700;margin-bottom:2px}
+.ticker-chg{font-size:11px;font-weight:600}
+
+/* RETRO */
+.retro-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+.retro-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:8px}
+.retro-date-txt{font-size:13px;font-weight:700;margin-bottom:2px}
+.retro-gen{font-size:11px;color:var(--dim)}
+.retro-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;text-transform:uppercase;white-space:nowrap}
+.retro-badge.alcista{background:rgba(0,230,118,.15);color:var(--green)}
+.retro-badge.bajista{background:rgba(255,82,82,.15);color:var(--red)}
+.retro-badge.neutral{background:rgba(255,215,64,.15);color:var(--yellow)}
+.retro-stitle{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--dim);margin:12px 0 6px}
+.retro-text{font-size:13px;line-height:1.7;color:var(--text)}
+.retro-alert{background:rgba(255,215,64,.08);border:1px solid rgba(255,215,64,.2);border-radius:8px;padding:10px;font-size:12px;color:var(--yellow);margin-bottom:6px;display:flex;gap:6px}
+.retro-opp{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.15);border-radius:8px;padding:10px;font-size:12px;color:var(--green);margin-bottom:6px;display:flex;gap:6px}
+
+/* ALERTS */
+.alert-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.alert-card.triggered{border-color:rgba(0,230,118,.4);background:rgba(0,230,118,.04)}
+.alert-badge{background:#0f3460;color:var(--blue);font-size:12px;font-weight:700;padding:6px 10px;border-radius:8px;min-width:64px;text-align:center}
+.alert-info{flex:1}
+.alert-name{font-size:13px;font-weight:600;margin-bottom:2px}
+.alert-cond{font-size:11px;color:var(--dim)}
+.alert-price-txt{font-size:16px;font-weight:700;color:var(--yellow)}
+.alert-card.triggered .alert-price-txt{color:var(--green)}
+
+/* FORM */
+.form-group{margin-bottom:12px}
+.form-label{font-size:12px;color:var(--dim);margin-bottom:5px;display:block;font-weight:500}
+.form-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;font-size:14px;outline:none;-webkit-appearance:none}
+.form-input:focus{border-color:var(--green)}
+.form-select{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;font-size:14px;outline:none;-webkit-appearance:none}
+.form-textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;font-size:14px;outline:none;resize:none;font-family:inherit}
+
+/* BTNS */
+.btn{background:var(--green);color:#000;border:none;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-top:4px}
+.btn-ghost{background:transparent;color:var(--dim);border:1px solid var(--border);padding:11px 20px;border-radius:10px;font-size:14px;cursor:pointer;width:100%;margin-top:4px}
+.btn-sm{background:transparent;color:var(--red);border:1px solid var(--red);padding:5px 10px;border-radius:7px;font-size:11px;cursor:pointer}
+
+/* MODAL SHEET */
+.sheet-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:flex-end}
+.sheet-overlay.open{display:flex}
+.sheet{background:var(--s1);border-radius:20px 20px 0 0;padding:20px 16px 32px;width:100%;max-height:85vh;overflow-y:auto}
+.sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+.sheet-title{font-size:16px;font-weight:700;margin-bottom:16px}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px;color:var(--dim)}
+.empty-icon{font-size:36px;margin-bottom:10px}
+.empty-text{font-size:13px;line-height:1.5}
+
+/* BANNER */
+.banner{background:linear-gradient(135deg,#0f1f40,#0d2a1e);border:1px solid #1a4d35;border-radius:12px;padding:14px 16px;margin-bottom:16px}
+.banner h3{font-size:13px;font-weight:700;margin-bottom:3px}
+.banner p{font-size:11px;color:var(--dim);line-height:1.4}
+.banner a{color:var(--green);text-decoration:none}
+
+/* ÚLTIMA ACT */
+.last-update{text-align:center;font-size:11px;color:var(--muted);padding:8px 0 4px}
+
+/* SUMMARY BAR */
+.summary-bar{background:var(--s1);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;gap:16px;overflow-x:auto;flex-shrink:0}
+.sum-item{flex-shrink:0;text-align:center}
+.sum-label{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.sum-val{font-size:13px;font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="logo"><div class="dot"></div>IOL Dashboard</div>
+  <div class="hdr-right" id="clock-area">
+    <div id="clock-time" style="font-weight:600;font-size:12px;color:var(--text)"></div>
+    <div id="clock-date"></div>
+  </div>
+</div>
+
+<!-- SUMMARY BAR -->
+<div class="summary-bar">
+  <div class="sum-item"><div class="sum-label">Total ARS</div><div class="sum-val" id="sb-total">$0</div></div>
+  <div class="sum-item"><div class="sum-label">Hoy</div><div class="sum-val up" id="sb-hoy">+0%</div></div>
+  <div class="sum-item"><div class="sum-label">Posiciones</div><div class="sum-val" id="sb-pos">0</div></div>
+  <div class="sum-item"><div class="sum-label">Actualizado</div><div class="sum-val" id="sb-upd" style="font-size:11px;color:var(--dim)">—</div></div>
+</div>
+
+<!-- SCROLL AREA -->
+<div class="scroll" id="scroll-area">
+
+  <!-- ===== PORTFOLIO ===== -->
+  <div class="page active" id="page-portfolio">
+    <div style="padding:16px">
+
+      <div class="banner">
+        <h3>🔗 Datos en tiempo real via IOL MCP</h3>
+        <p>Pedile a Claude: <em>"Actualizá los precios de mi cartera"</em> y el dashboard se sincroniza automáticamente. O visitá <a href="https://mcp.invertironline.com" target="_blank">mcp.invertironline.com</a> para conectar.</p>
+      </div>
+
+      <div class="stitle">Resumen</div>
+      <div class="cards-row">
+        <div class="card"><div class="card-label">Valuación Total</div><div class="card-val" id="c-total">$0</div><div class="card-sub" id="c-usd">USD $0</div></div>
+        <div class="card"><div class="card-label">Resultado Hoy</div><div class="card-val up" id="c-hoy">—</div><div class="card-sub" id="c-hoy-s">—</div></div>
+        <div class="card"><div class="card-label">Top Gainer</div><div class="card-val up" id="c-gain">—</div><div class="card-sub" id="c-gain-s">—</div></div>
+        <div class="card"><div class="card-label">Top Loser</div><div class="card-val down" id="c-loss">—</div><div class="card-sub" id="c-loss-s">—</div></div>
+      </div>
+
+      <div class="stitle">Mis Posiciones</div>
+      <div class="pos-list" id="pos-list">
+        <div class="empty" id="pos-empty" style="display:none">
+          <div class="empty-icon">📊</div>
+          <div class="empty-text">Sin posiciones.<br>Tocá + para agregar.</div>
+        </div>
+      </div>
+
+      <div class="last-update">Última actualización: <span id="last-upd-txt">—</span></div>
+    </div>
+  </div>
+
+  <!-- ===== NOTICIAS ===== -->
+  <div class="page" id="page-noticias">
+    <div style="padding:16px">
+
+      <div class="tickers" id="market-tickers">
+        <div class="ticker"><div class="ticker-name">S&amp;P 500</div><div class="ticker-val" id="t-spx">—</div><div class="ticker-chg" id="tc-spx">…</div></div>
+        <div class="ticker"><div class="ticker-name">Nasdaq</div><div class="ticker-val" id="t-ndx">—</div><div class="ticker-chg" id="tc-ndx">…</div></div>
+        <div class="ticker"><div class="ticker-name">Merval</div><div class="ticker-val" id="t-merval">—</div><div class="ticker-chg" id="tc-merval">…</div></div>
+        <div class="ticker"><div class="ticker-name">CCL</div><div class="ticker-val" id="t-ccl">—</div><div class="ticker-chg" id="tc-ccl">…</div></div>
+        <div class="ticker"><div class="ticker-name">Blue</div><div class="ticker-val" id="t-blue">—</div><div class="ticker-chg" id="tc-blue">…</div></div>
+        <div class="ticker"><div class="ticker-name">Oro</div><div class="ticker-val" id="t-gold">—</div><div class="ticker-chg" id="tc-gold">…</div></div>
+        <div class="ticker"><div class="ticker-name">BTC</div><div class="ticker-val" id="t-btc">—</div><div class="ticker-chg" id="tc-btc">…</div></div>
+      </div>
+
+      <div class="pills" id="news-pills">
+        <button class="pill active" onclick="filterNews('all',this)">Todas</button>
+        <button class="pill" onclick="filterNews('argentina',this)">Argentina</button>
+        <button class="pill" onclick="filterNews('global',this)">Global</button>
+        <button class="pill" onclick="filterNews('acciones',this)">Acciones</button>
+        <button class="pill" onclick="filterNews('macro',this)">Macro</button>
+        <button class="pill" onclick="filterNews('crypto',this)">Crypto</button>
+      </div>
+
+      <div class="news-list" id="news-list"></div>
+    </div>
+  </div>
+
+  <!-- ===== RETROSPECTIVA ===== -->
+  <div class="page" id="page-retro">
+    <div style="padding:16px">
+      <div class="stitle">Análisis IA</div>
+      <p style="font-size:12px;color:var(--dim);margin-bottom:14px;">Pedile a Claude: <em>"Hacé una retrospectiva del mercado de hoy"</em> y pegá el resultado acá.</p>
+      <div id="retro-list"></div>
+      <button class="btn" style="margin-bottom:12px;" onclick="openSheet('retro-sheet')">+ Nueva Retrospectiva</button>
+    </div>
+  </div>
+
+  <!-- ===== ALERTAS ===== -->
+  <div class="page" id="page-alertas">
+    <div style="padding:16px">
+      <div class="stitle">Alertas de Precio</div>
+      <div id="alerts-empty" class="empty" style="display:none;padding:40px 0">
+        <div class="empty-icon">🔔</div>
+        <div class="empty-text">Sin alertas.<br>Tocá + para crear.</div>
+      </div>
+      <div id="alerts-list"></div>
+
+      <div style="background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:16px">
+        <div class="stitle" style="margin-top:0">Verificar precios</div>
+        <div id="price-check-list"></div>
+        <button class="btn" style="margin-top:10px" onclick="checkAlerts()">Verificar alertas</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end scroll -->
+
+<!-- FAB -->
+<button class="fab" id="fab" onclick="onFab()">+</button>
+
+<!-- BOTTOM NAV -->
+<div class="bnav">
+  <button class="btab active" onclick="showTab('portfolio')" id="btab-portfolio">
+    <span class="btab-icon">💼</span>Portfolio
+  </button>
+  <button class="btab" onclick="showTab('noticias')" id="btab-noticias">
+    <span class="btab-icon">📰</span>Noticias
+  </button>
+  <button class="btab" onclick="showTab('retro')" id="btab-retro">
+    <span class="btab-icon">🤖</span>Análisis IA
+  </button>
+  <button class="btab" onclick="showTab('alertas')" id="btab-alertas">
+    <div style="position:relative;display:inline-block">
+      <span class="btab-icon">🔔</span>
+      <span id="alert-dot" class="badge-dot"></span>
+    </div>Alertas
+  </button>
+</div>
+
+<!-- SHEETS -->
+<div class="sheet-overlay" id="pos-sheet" onclick="if(event.target===this)closeSheet('pos-sheet')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">➕ Agregar Posición</div>
+    <div class="form-group"><label class="form-label">Ticker</label><input class="form-input" id="ps-ticker" placeholder="Ej: GGAL, NVDA" style="text-transform:uppercase"></div>
+    <div class="form-group"><label class="form-label">Nombre</label><input class="form-input" id="ps-name" placeholder="Ej: CEDEAR Nvidia"></div>
+    <div class="form-group"><label class="form-label">Tipo</label><select class="form-select" id="ps-tipo"><option>Acción</option><option>CEDEAR</option><option>Bono</option><option>FCI</option><option>Otro</option></select></div>
+    <div class="form-group"><label class="form-label">Cantidad</label><input class="form-input" id="ps-cant" type="number" placeholder="100"></div>
+    <div class="form-group"><label class="form-label">Precio de Compra (ARS)</label><input class="form-input" id="ps-compra" type="number" placeholder="13960"></div>
+    <div class="form-group"><label class="form-label">Precio Actual (ARS)</label><input class="form-input" id="ps-actual" type="number" placeholder="13960"></div>
+    <div class="form-group"><label class="form-label">Var. del Día %</label><input class="form-input" id="ps-vardia" type="number" placeholder="5.35" step="0.01"></div>
+    <button class="btn" onclick="addPosition()">Agregar</button>
+    <button class="btn-ghost" onclick="closeSheet('pos-sheet')">Cancelar</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="alert-sheet" onclick="if(event.target===this)closeSheet('alert-sheet')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">🔔 Nueva Alerta</div>
+    <div class="form-group"><label class="form-label">Ticker</label><input class="form-input" id="as-ticker" placeholder="Ej: GGAL" style="text-transform:uppercase"></div>
+    <div class="form-group"><label class="form-label">Nombre</label><input class="form-input" id="as-name" placeholder="Ej: Grupo Galicia"></div>
+    <div class="form-group"><label class="form-label">Condición</label><select class="form-select" id="as-cond"><option value="above">Sube sobre</option><option value="below">Baja de</option></select></div>
+    <div class="form-group"><label class="form-label">Precio objetivo (ARS)</label><input class="form-input" id="as-price" type="number" placeholder="15000"></div>
+    <div class="form-group"><label class="form-label">Notas (opcional)</label><input class="form-input" id="as-notes" placeholder="Ej: Tomar ganancia"></div>
+    <button class="btn" onclick="addAlert()">Crear Alerta</button>
+    <button class="btn-ghost" onclick="closeSheet('alert-sheet')">Cancelar</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="retro-sheet" onclick="if(event.target===this)closeSheet('retro-sheet')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">🤖 Nueva Retrospectiva</div>
+    <div class="form-group"><label class="form-label">Fecha</label><input class="form-input" id="rs-date" type="date"></div>
+    <div class="form-group"><label class="form-label">Sentimiento</label><select class="form-select" id="rs-sent"><option value="alcista">📈 Alcista</option><option value="neutral" selected>⚖️ Neutral</option><option value="bajista">📉 Bajista</option></select></div>
+    <div class="form-group"><label class="form-label">Resumen ejecutivo</label><textarea class="form-textarea" id="rs-summary" rows="4" placeholder="Pegá o escribí el análisis del día..."></textarea></div>
+    <div class="form-group"><label class="form-label">Alertas (una por línea)</label><textarea class="form-textarea" id="rs-alerts" rows="3"></textarea></div>
+    <div class="form-group"><label class="form-label">Oportunidades (una por línea)</label><textarea class="form-textarea" id="rs-ops" rows="3"></textarea></div>
+    <button class="btn" onclick="saveRetro()">Guardar</button>
+    <button class="btn-ghost" onclick="closeSheet('retro-sheet')">Cancelar</button>
+  </div>
+</div>
+
+<script>
+// ========= DATA IOL — actualizado 01/06/2026 =========
+const IOL_POSITIONS = [
+  {id:1,ticker:'YPFD',name:'YPF',tipo:'Acción',cantidad:20,precioCompra:81500,precioActual:81500,varDia:4.02},
+  {id:2,ticker:'NVDA',name:'CEDEAR Nvidia Corp.',tipo:'CEDEAR',cantidad:79,precioCompra:13960,precioActual:13960,varDia:5.35},
+  {id:3,ticker:'MSFT',name:'CEDEAR Microsoft Corp.',tipo:'CEDEAR',cantidad:24,precioCompra:22940,precioActual:22940,varDia:3.66},
+  {id:4,ticker:'AAPL',name:'CEDEAR Apple Inc.',tipo:'CEDEAR',cantidad:23,precioCompra:22950,precioActual:22950,varDia:-0.86},
+  {id:5,ticker:'AMZN',name:'CEDEAR Amazon.com Inc.',tipo:'CEDEAR',cantidad:129,precioCompra:2705,precioActual:2705,varDia:-2.95},
+  {id:6,ticker:'PAMP',name:'Pampa Energía',tipo:'Acción',cantidad:61,precioCompra:5245,precioActual:5245,varDia:3.24},
+  {id:7,ticker:'META',name:'CEDEAR Meta Platforms',tipo:'CEDEAR',cantidad:6,precioCompra:37400,precioActual:37400,varDia:-4.44},
+  {id:8,ticker:'MELI',name:'CEDEAR MercadoLibre Inc.',tipo:'CEDEAR',cantidad:10,precioCompra:21530,precioActual:21530,varDia:2.86},
+  {id:9,ticker:'SPHQ',name:'CEDEAR S&P 500 Quality ETF',tipo:'CEDEAR',cantidad:23,precioCompra:9045,precioActual:9045,varDia:0.16},
+  {id:10,ticker:'MCD',name:"CEDEAR McDonald's Corp.",tipo:'CEDEAR',cantidad:12,precioCompra:17210,precioActual:17210,varDia:-0.63},
+  {id:11,ticker:'SHOP',name:'CEDEAR Shopify Inc.',tipo:'CEDEAR',cantidad:111,precioCompra:1714,precioActual:1714,varDia:4.70},
+  {id:12,ticker:'V',name:'CEDEAR Visa Inc.',tipo:'CEDEAR',cantidad:7,precioCompra:26740,precioActual:26740,varDia:-1.47},
+  {id:13,ticker:'B',name:'CEDEAR Barrick Mining Corp.',tipo:'CEDEAR',cantidad:4,precioCompra:31600,precioActual:31600,varDia:0.00},
+  {id:14,ticker:'BABA',name:'CEDEAR Alibaba Group',tipo:'CEDEAR',cantidad:6,precioCompra:20840,precioActual:20840,varDia:1.46},
+  {id:15,ticker:'PAAS',name:'CEDEAR Pan American Silver',tipo:'CEDEAR',cantidad:4,precioCompra:27580,precioActual:27580,varDia:-2.05},
+  {id:16,ticker:'HMY',name:'CEDEAR Harmony Gold Mining',tipo:'CEDEAR',cantidad:4,precioCompra:26320,precioActual:26320,varDia:-2.94},
+  {id:17,ticker:'BIDU',name:'CEDEAR Baidu Inc.',tipo:'CEDEAR',cantidad:4,precioCompra:17890,precioActual:17890,varDia:-2.07},
+  {id:18,ticker:'NIO',name:'CEDEAR NIO Inc.',tipo:'CEDEAR',cantidad:18,precioCompra:2218,precioActual:2218,varDia:6.89},
+  {id:19,ticker:'JD',name:'CEDEAR JD.com Inc.',tipo:'CEDEAR',cantidad:2,precioCompra:10850,precioActual:10850,varDia:1.40},
+  {id:20,ticker:'IOLCAMA',name:'FCI IOL Cash Management',tipo:'FCI',cantidad:192186,precioCompra:11.41,precioActual:11.41,varDia:0.06},
+  {id:21,ticker:'IOLDOLD',name:'FCI IOL Dólar Ahorro Plus',tipo:'FCI',cantidad:22,precioCompra:1.08,precioActual:1.08,varDia:0.05},
+];
+
+// ========= STATE =========
+let portfolio = JSON.parse(localStorage.getItem('iol-mob-portfolio')||'null');
+if(!portfolio){portfolio=IOL_POSITIONS;localStorage.setItem('iol-mob-portfolio',JSON.stringify(portfolio));}
+let alerts = JSON.parse(localStorage.getItem('iol-mob-alerts')||'[]');
+let retros = JSON.parse(localStorage.getItem('iol-mob-retros')||'[]');
+let currentTab = 'portfolio';
+let newsFilter = 'all';
+
+// ========= TABS =========
+function showTab(tab){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.btab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  document.getElementById('btab-'+tab).classList.add('active');
+  currentTab = tab;
+  document.getElementById('fab').style.display = (tab==='retro')?'none':'flex';
+  if(tab==='noticias'){renderNews();fetchMarket();}
+  if(tab==='alertas'){renderAlerts();}
+  document.getElementById('scroll-area').scrollTop=0;
+}
+
+function onFab(){
+  if(currentTab==='portfolio') openSheet('pos-sheet');
+  else if(currentTab==='alertas') openSheet('alert-sheet');
+}
+
+// ========= SHEETS =========
+function openSheet(id){document.getElementById(id).classList.add('open');}
+function closeSheet(id){document.getElementById(id).classList.remove('open');}
+
+// ========= CLOCK =========
+function tick(){
+  const now=new Date();
+  const tz='America/Argentina/Buenos_Aires';
+  document.getElementById('clock-time').textContent=now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',timeZone:tz});
+  document.getElementById('clock-date').textContent=now.toLocaleDateString('es-AR',{weekday:'short',day:'numeric',month:'short',timeZone:tz});
+}
+setInterval(tick,1000);tick();
+
+// ========= PORTFOLIO =========
+function savePortfolio(){localStorage.setItem('iol-mob-portfolio',JSON.stringify(portfolio));}
+
+function fmtARS(n){
+  if(isNaN(n)||n===null)return'$0';
+  const abs=Math.abs(n);
+  if(abs>=1000000)return'$'+(abs/1000000).toFixed(2)+'M';
+  if(abs>=1000)return'$'+abs.toLocaleString('es-AR',{maximumFractionDigits:0});
+  return'$'+abs.toFixed(2);
+}
+function fmtARSfull(n){
+  if(isNaN(n))return'$0';
+  return'$'+Math.abs(n).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function renderPortfolio(){
+  const list=document.getElementById('pos-list');
+  const empty=document.getElementById('pos-empty');
+  if(portfolio.length===0){empty.style.display='block';list.innerHTML='';updateSummary();return;}
+  empty.style.display='none';
+  list.innerHTML=portfolio.map(p=>{
+    const val=p.precioActual*p.cantidad;
+    const gan=((p.precioActual-p.precioCompra)/p.precioCompra*100);
+    const ganARS=(p.precioActual-p.precioCompra)*p.cantidad;
+    const dia=p.varDia||0;
+    const diaCls=dia>=0?'up':'down';
+    const ganCls=gan>=0?'up':'down';
+    return`<div class="pos-card">
+      <div class="pos-top">
+        <span class="pos-ticker">${p.ticker}</span>
+        <span class="pos-tipo">${p.tipo}</span>
+      </div>
+      <div class="pos-name">${p.name}</div>
+      <div class="pos-nums">
+        <div class="pos-num"><div class="pos-num-label">Cant.</div><div class="pos-num-val">${p.cantidad>=1000?(p.cantidad/1000).toFixed(1)+'k':p.cantidad}</div></div>
+        <div class="pos-num"><div class="pos-num-label">P.Actual</div><div class="pos-num-val">${fmtARS(p.precioActual)}</div></div>
+        <div class="pos-num"><div class="pos-num-label">Valuación</div><div class="pos-num-val">${fmtARS(val)}</div></div>
+      </div>
+      <div class="pos-dia-bar">
+        <span class="pos-valuacion">P&L: <span class="${ganCls}">${gan>=0?'+':''}${gan.toFixed(1)}% (${gan>=0?'+':''}${fmtARS(ganARS)})</span></span>
+        <span class="pos-dia ${diaCls}">${dia>=0?'+':''}${dia.toFixed(2)}% hoy</span>
+      </div>
+    </div>`;
+  }).join('');
+  updateSummary();
+}
+
+function updateSummary(){
+  const total=portfolio.reduce((s,p)=>s+p.precioActual*p.cantidad,0);
+  const CCL=1290;
+  // weighted avg daily change
+  const wDay=portfolio.reduce((s,p)=>s+(p.varDia||0)*(p.precioActual*p.cantidad),0)/Math.max(total,1);
+
+  document.getElementById('c-total').textContent=fmtARS(total);
+  document.getElementById('c-usd').textContent='USD '+fmtARS(total/CCL);
+  document.getElementById('sb-total').textContent=fmtARS(total);
+  document.getElementById('sb-pos').textContent=portfolio.length;
+
+  const dayEl=document.getElementById('c-hoy');
+  dayEl.textContent=(wDay>=0?'+':'')+wDay.toFixed(2)+'%';
+  dayEl.className='card-val '+(wDay>=0?'up':'down');
+  document.getElementById('c-hoy-s').textContent='variación ponderada';
+
+  const sbHoy=document.getElementById('sb-hoy');
+  sbHoy.textContent=(wDay>=0?'+':'')+wDay.toFixed(2)+'%';
+  sbHoy.className='sum-val '+(wDay>=0?'up':'down');
+
+  // top gainer / loser
+  const sorted=[...portfolio].filter(p=>p.varDia!==undefined).sort((a,b)=>b.varDia-a.varDia);
+  if(sorted.length>0){
+    const g=sorted[0];
+    document.getElementById('c-gain').textContent='+'+g.varDia.toFixed(2)+'%';
+    document.getElementById('c-gain-s').textContent=g.ticker;
+    const l=sorted[sorted.length-1];
+    document.getElementById('c-loss').textContent=l.varDia.toFixed(2)+'%';
+    document.getElementById('c-loss-s').textContent=l.ticker;
+  }
+
+  const now=new Date().toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',timeZone:'America/Argentina/Buenos_Aires'});
+  document.getElementById('last-upd-txt').textContent=now;
+  document.getElementById('sb-upd').textContent=now.split(',')[1]?.trim()||now;
+}
+
+function addPosition(){
+  const ticker=document.getElementById('ps-ticker').value.trim().toUpperCase();
+  const name=document.getElementById('ps-name').value.trim();
+  const tipo=document.getElementById('ps-tipo').value;
+  const cantidad=parseFloat(document.getElementById('ps-cant').value);
+  const compra=parseFloat(document.getElementById('ps-compra').value);
+  const actual=parseFloat(document.getElementById('ps-actual').value);
+  const vardia=parseFloat(document.getElementById('ps-vardia').value)||0;
+  if(!ticker||isNaN(cantidad)||isNaN(compra)||isNaN(actual)){alert('Completá todos los campos');return;}
+  portfolio.push({id:Date.now(),ticker,name:name||ticker,tipo,cantidad,precioCompra:compra,precioActual:actual,varDia:vardia});
+  savePortfolio();renderPortfolio();closeSheet('pos-sheet');
+  ['ps-ticker','ps-name','ps-cant','ps-compra','ps-actual','ps-vardia'].forEach(id=>document.getElementById(id).value='');
+}
+
+// ========= NEWS =========
+const newsData=[
+  {title:'Merval sube 2.1% impulsado por energía y finanzas',source:'Bloomberg Ar',desc:'YPF y Banco Galicia lideran las subas. El índice avanzó 2.1% en la primera hora.',time:'Hace 45 min',cat:'argentina',url:'https://www.bloomberg.com'},
+  {title:'Fed en foco: mercado descuenta pausa en tasas para junio',source:'Reuters',desc:'Futuros sobre tasas muestran 94% de probabilidad de que la tasa se mantenga estable.',time:'Hace 1 hora',cat:'macro',url:'https://www.reuters.com'},
+  {title:'Bitcoin supera los USD 105.000 y vuelve a zona de máximos',source:'CoinDesk',desc:'El criptoactivo recuperó terreno apoyado en flujos institucionales.',time:'Hace 2 horas',cat:'crypto',url:'https://www.coindesk.com'},
+  {title:'Riesgo país argentino cae a 1.420 pb, mínimo desde 2018',source:'Ámbito',desc:'Compresión de spreads soberanos refleja mejoras en reservas del BCRA.',time:'Hace 2 horas',cat:'argentina',url:'https://www.ambito.com'},
+  {title:'S&P 500 cierra en máximos: tecnología lidera rally de fin de mes',source:'WSJ',desc:'El índice terminó mayo con ganancia del 4.8%, el mejor mes del año.',time:'Hace 3 horas',cat:'global',url:'https://www.wsj.com'},
+  {title:'YPF: analistas elevan precio objetivo tras resultados Q1',source:'Infobae',desc:'Ganancias netas de USD 380M en Q1, superando estimaciones. ADRs +5.2%.',time:'Hace 4 horas',cat:'acciones',url:'https://www.infobae.com'},
+  {title:'Dólar blue sin cambios: se mantiene en $1.270',source:'El Cronista',desc:'El CCL opera en $1.285 con escasa volatilidad en el inicio del mes.',time:'Hace 5 horas',cat:'argentina',url:'https://www.cronista.com'},
+  {title:'Nvidia supera estimaciones: ingresos de IA crecen 260% interanual',source:'CNBC',desc:'Ingresos de USD 26.000M. La acción sube 6% en afterhours.',time:'Hace 6 horas',cat:'acciones',url:'https://www.cnbc.com'},
+  {title:'Oro toca USD 2.950 la onza ante tensiones geopolíticas',source:'MarketWatch',desc:'El metal recupera su rol de activo refugio. La plata sube 2.4%.',time:'Hace 7 horas',cat:'macro',url:'https://www.marketwatch.com'},
+  {title:'Macro argentina: actividad sube 5.2% interanual en abril',source:'INDEC',desc:'EMAE muestra recuperación sostenida. Construcción y comercio lideran.',time:'Hace 12 horas',cat:'macro',url:'https://www.lanacion.com.ar'},
+];
+
+function filterNews(cat,el){
+  newsFilter=cat;
+  document.querySelectorAll('#news-pills .pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  renderNews();
+}
+
+function renderNews(){
+  const items=newsFilter==='all'?newsData:newsData.filter(n=>n.cat===newsFilter);
+  const list=document.getElementById('news-list');
+  if(items.length===0){list.innerHTML='<div class="empty"><div class="empty-icon">📰</div><div class="empty-text">Sin noticias en esta categoría</div></div>';return;}
+  list.innerHTML=items.map(n=>`<a class="news-card" href="${n.url}" target="_blank" rel="noopener">
+    <div class="news-src">${n.source}</div>
+    <div class="news-title">${n.title}</div>
+    <div class="news-desc">${n.desc}</div>
+    <div class="news-time">${n.time}</div>
+  </a>`).join('');
+}
+
+// ========= MARKET TICKERS =========
+async function fetchMarket(){
+  try{
+    const r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
+    if(r.ok){const d=await r.json();if(d.bitcoin){setT('btc','$'+Math.round(d.bitcoin.usd).toLocaleString(),d.bitcoin.usd_24h_change||0);}}
+  }catch(e){}
+  // Simulated
+  const sim=(base,v)=>{const c=(Math.random()-.45)*v;return{val:base*(1+c/100),chg:c};};
+  [['spx',5280,.8],['ndx',18900,1.1],['merval',2850000,1.5],['ccl',1285,.3],['blue',1270,.5],['gold',2950,.6]].forEach(([id,b,v])=>{
+    const{val,chg}=sim(b,v);
+    const fmt=b>=100000?Math.round(val/1000)+'k':'$'+Math.round(val).toLocaleString();
+    setT(id,fmt,chg);
+  });
+}
+
+function setT(id,val,chg){
+  const el=document.getElementById('t-'+id);
+  const ch=document.getElementById('tc-'+id);
+  if(el)el.textContent=val;
+  if(ch){ch.textContent=(chg>=0?'+':'')+chg.toFixed(2)+'%';ch.className='ticker-chg '+(chg>=0?'up':'down');}
+}
+
+// ========= RETRO =========
+function saveRetro(){
+  const date=document.getElementById('rs-date').value;
+  const sent=document.getElementById('rs-sent').value;
+  const summary=document.getElementById('rs-summary').value.trim();
+  const als=document.getElementById('rs-alerts').value.trim().split('\n').filter(Boolean);
+  const ops=document.getElementById('rs-ops').value.trim().split('\n').filter(Boolean);
+  if(!summary){alert('Completá el resumen');return;}
+  retros.unshift({id:Date.now(),date,sent,summary,als,ops});
+  localStorage.setItem('iol-mob-retros',JSON.stringify(retros));
+  renderRetros();closeSheet('retro-sheet');
+}
+
+function renderRetros(){
+  const list=document.getElementById('retro-list');
+  const sentLabel={alcista:'📈 Alcista',bajista:'📉 Bajista',neutral:'⚖️ Neutral'};
+  const all=[
+    {id:0,date:'01/06/2026',sent:'neutral',summary:'El mercado abrió la semana con sesgo positivo, impulsado por mejoras en el frente comercial global y datos de actividad manufacturera por encima de expectativas. El Merval consolidó ganancias con volumen moderado, mientras el dólar CCL se mantuvo estable en la zona de $1.280-$1.295.',als:['Reunión de la Fed el miércoles. Tono del comunicado clave para emergentes.','Inflación PCE de EE.UU. el viernes. Dato caliente podría presionar al Merval.'],ops:['YPF en zona de soporte técnico con petróleo en recuperación — riesgo/retorno favorable.','Bonos AL30D con spread comprimiendo — atractivos para horizonte 6-12 meses.']},
+    ...retros
+  ];
+  list.innerHTML=all.map(r=>`<div class="retro-card">
+    <div class="retro-hdr">
+      <div><div class="retro-date-txt">${r.date}</div><div class="retro-gen" style="font-size:10px;color:var(--dim)">${r.id===0?'Ejemplo cargado':'Guardado'}</div></div>
+      <span class="retro-badge ${r.sent}">${sentLabel[r.sent]||r.sent}</span>
+    </div>
+    <div class="retro-stitle">📋 Resumen</div>
+    <div class="retro-text">${r.summary}</div>
+    ${r.als&&r.als.length?'<div class="retro-stitle">🚨 Alertas</div>'+r.als.map(a=>`<div class="retro-alert">⚠️ ${a}</div>`).join(''):''}
+    ${r.ops&&r.ops.length?'<div class="retro-stitle">💡 Oportunidades</div>'+r.ops.map(o=>`<div class="retro-opp">💚 ${o}</div>`).join(''):''}
+  </div>`).join('');
+}
+
+// ========= ALERTS =========
+function addAlert(){
+  const ticker=document.getElementById('as-ticker').value.trim().toUpperCase();
+  const name=document.getElementById('as-name').value.trim();
+  const cond=document.getElementById('as-cond').value;
+  const price=parseFloat(document.getElementById('as-price').value);
+  const notes=document.getElementById('as-notes').value.trim();
+  if(!ticker||isNaN(price)){alert('Completá ticker y precio');return;}
+  alerts.push({id:Date.now(),ticker,name:name||ticker,cond,price,notes,triggered:false});
+  localStorage.setItem('iol-mob-alerts',JSON.stringify(alerts));
+  renderAlerts();closeSheet('alert-sheet');
+}
+
+function renderAlerts(){
+  const list=document.getElementById('alerts-list');
+  const empty=document.getElementById('alerts-empty');
+  const dot=document.getElementById('alert-dot');
+  if(alerts.length===0){empty.style.display='block';list.innerHTML='';dot.style.display='none';
+    document.getElementById('price-check-list').innerHTML='<span style="font-size:12px;color:var(--dim)">Sin alertas.</span>';return;}
+  empty.style.display='none';
+  const triggered=alerts.filter(a=>a.triggered).length;
+  dot.style.display=triggered>0?'block':'none';
+  list.innerHTML=alerts.map(a=>`<div class="alert-card ${a.triggered?'triggered':''}">
+    <div class="alert-badge">${a.ticker}</div>
+    <div class="alert-info">
+      <div class="alert-name">${a.name} ${a.triggered?'<span style="color:var(--green);font-size:11px">✓ DISPARADA</span>':''}</div>
+      <div class="alert-cond">${a.cond==='above'?'↑ Sube sobre':'↓ Baja de'} ${fmtARSfull(a.price)} ${a.notes?'· '+a.notes:''}</div>
+    </div>
+    <div>
+      <div class="alert-price-txt">${fmtARS(a.price)}</div>
+      <button class="btn-sm" onclick="removeAlert(${a.id})" style="margin-top:6px">✕</button>
+    </div>
+  </div>`).join('');
+
+  const tickers=[...new Set(alerts.map(a=>a.ticker))];
+  document.getElementById('price-check-list').innerHTML=tickers.map(t=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+    <span style="background:#0f3460;color:var(--blue);font-size:12px;font-weight:700;padding:5px 10px;border-radius:7px;min-width:64px;text-align:center">${t}</span>
+    <input class="form-input" type="number" id="cp-${t}" placeholder="Precio actual" style="flex:1">
+  </div>`).join('');
+}
+
+function removeAlert(id){alerts=alerts.filter(a=>a.id!==id);localStorage.setItem('iol-mob-alerts',JSON.stringify(alerts));renderAlerts();}
+
+function checkAlerts(){
+  const tickers=[...new Set(alerts.map(a=>a.ticker))];
+  const prices={};
+  tickers.forEach(t=>{const el=document.getElementById('cp-'+t);if(el&&el.value)prices[t]=parseFloat(el.value);});
+  alerts=alerts.map(a=>{const c=prices[a.ticker];if(c!==undefined)a.triggered=a.cond==='above'?c>=a.price:c<=a.price;return a;});
+  localStorage.setItem('iol-mob-alerts',JSON.stringify(alerts));
+  renderAlerts();
+  const n=alerts.filter(a=>a.triggered).length;
+  alert(n>0?`¡${n} alerta${n>1?'s':''} disparada${n>1?'s':''}!`:'Ninguna alerta disparada.');
+}
+
+// ========= INIT =========
+document.getElementById('rs-date').value=new Date().toISOString().split('T')[0];
+document.getElementById('ps-ticker').addEventListener('input',e=>e.target.value=e.target.value.toUpperCase());
+document.getElementById('as-ticker').addEventListener('input',e=>e.target.value=e.target.value.toUpperCase());
+renderPortfolio();
+renderRetros();
+</script>
+</body>
+</html>
