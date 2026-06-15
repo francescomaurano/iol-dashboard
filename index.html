@@ -335,25 +335,25 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 </div>
 
 <script>
-// ========= DATA IOL — actualizado 13/06/2026 10:30 =========
+// ========= DATA IOL — actualizado 15/06/2026 10:30 =========
 const IOL_POSITIONS = [
   {id:1,ticker:'YPFD',name:'YPF',tipo:'Acción',cantidad:22,precioCompra:81500,precioActual:83625,varDia:-0.08},
-  {id:2,ticker:'NVDA',name:'CEDEAR Nvidia Corporation',tipo:'CEDEAR',cantidad:122,precioCompra:13960,precioActual:12810,varDia:0.23},
-  {id:3,ticker:'MSFT',name:'CEDEAR Microsoft Corp.',tipo:'CEDEAR',cantidad:24,precioCompra:22940,precioActual:19490,varDia:0.15},
-  {id:4,ticker:'AAPL',name:'CEDEAR Apple Inc.',tipo:'CEDEAR',cantidad:23,precioCompra:22950,precioActual:21780,varDia:-1.22},
-  {id:5,ticker:'AMZN',name:'CEDEAR Amazon.Com, Inc',tipo:'CEDEAR',cantidad:129,precioCompra:2705,precioActual:2486,varDia:-1.05},
+  {id:2,ticker:'NVDA',name:'Cedear Nvidia Corporation',tipo:'CEDEAR',cantidad:122,precioCompra:13960,precioActual:12810,varDia:0.23},
+  {id:3,ticker:'MSFT',name:'Cedear Microsoft Corp.',tipo:'CEDEAR',cantidad:24,precioCompra:22940,precioActual:19490,varDia:0.15},
+  {id:4,ticker:'AAPL',name:'Cedear Apple Inc.',tipo:'CEDEAR',cantidad:23,precioCompra:22950,precioActual:21780,varDia:-1.22},
+  {id:5,ticker:'AMZN',name:'Cedear Amazon.Com, Inc',tipo:'CEDEAR',cantidad:129,precioCompra:2705,precioActual:2486,varDia:-1.05},
   {id:6,ticker:'PAMP',name:'Pampa Energía',tipo:'Acción',cantidad:61,precioCompra:5245,precioActual:5300,varDia:-0.09},
-  {id:7,ticker:'META',name:'CEDEAR Facebook, Inc.',tipo:'CEDEAR',cantidad:6,precioCompra:37400,precioActual:35360,varDia:-0.07},
-  {id:8,ticker:'MELI',name:'CEDEAR Mercadolibre Inc.',tipo:'CEDEAR',cantidad:10,precioCompra:21530,precioActual:19860,varDia:-1.24},
+  {id:7,ticker:'META',name:'Cedear Facebook, Inc.',tipo:'CEDEAR',cantidad:6,precioCompra:37400,precioActual:35360,varDia:-0.07},
+  {id:8,ticker:'MELI',name:'Cedear Mercadolibre Inc.',tipo:'CEDEAR',cantidad:10,precioCompra:21530,precioActual:19860,varDia:-1.24},
   {id:9,ticker:'SPHQ',name:'CEDEAR INVERSCO S&P 500 QUALITY ETF',tipo:'CEDEAR',cantidad:27,precioCompra:9045,precioActual:9355,varDia:1.13},
-  {id:10,ticker:'MCD',name:"CEDEAR Mcdonald's Corporation",tipo:'CEDEAR',cantidad:12,precioCompra:17210,precioActual:17790,varDia:0},
-  {id:11,ticker:'V',name:'CEDEAR Visa Inc',tipo:'CEDEAR',cantidad:7,precioCompra:26740,precioActual:26840,varDia:0.97},
-  {id:12,ticker:'B',name:'CEDEAR Barrick Mining Corporation',tipo:'CEDEAR',cantidad:4,precioCompra:31600,precioActual:30040,varDia:2.8},
-  {id:13,ticker:'BABA',name:'CEDEAR Alibaba Group Holding L',tipo:'CEDEAR',cantidad:6,precioCompra:20840,precioActual:18780,varDia:0.32},
-  {id:14,ticker:'PAAS',name:'CEDEAR Pan American Silver Cor',tipo:'CEDEAR',cantidad:4,precioCompra:27580,precioActual:24080,varDia:4.06},
-  {id:15,ticker:'HMY',name:'CEDEAR Harmony Gold Mining Co',tipo:'CEDEAR',cantidad:4,precioCompra:26320,precioActual:23770,varDia:4.39},
-  {id:16,ticker:'BIDU',name:'CEDEAR Baidu, Inc.',tipo:'CEDEAR',cantidad:4,precioCompra:17890,precioActual:15730,varDia:0.06},
-  {id:17,ticker:'JD',name:'CEDEAR Jd.Com, Inc.',tipo:'CEDEAR',cantidad:2,precioCompra:10850,precioActual:10720,varDia:1.99},
+  {id:10,ticker:'MCD',name:"Cedear Mcdonald's Corporation",tipo:'CEDEAR',cantidad:12,precioCompra:17210,precioActual:17790,varDia:0},
+  {id:11,ticker:'V',name:'Cedear Visa Inc',tipo:'CEDEAR',cantidad:7,precioCompra:26740,precioActual:26840,varDia:0.97},
+  {id:12,ticker:'B',name:'Cedear Barrick Mining Corporation',tipo:'CEDEAR',cantidad:4,precioCompra:31600,precioActual:30040,varDia:2.8},
+  {id:13,ticker:'BABA',name:'Cedear Alibaba Group Holding L',tipo:'CEDEAR',cantidad:6,precioCompra:20840,precioActual:18780,varDia:0.32},
+  {id:14,ticker:'PAAS',name:'Cedear Pan American Silver Cor',tipo:'CEDEAR',cantidad:4,precioCompra:27580,precioActual:24080,varDia:4.06},
+  {id:15,ticker:'HMY',name:'Cedear Harmony Gold Mining Co',tipo:'CEDEAR',cantidad:4,precioCompra:26320,precioActual:23770,varDia:4.39},
+  {id:16,ticker:'BIDU',name:'Cedear Baidu, Inc.',tipo:'CEDEAR',cantidad:4,precioCompra:17890,precioActual:15730,varDia:0.06},
+  {id:17,ticker:'JD',name:'Cedear Jd.Com, Inc.',tipo:'CEDEAR',cantidad:2,precioCompra:10850,precioActual:10720,varDia:1.99},
   {id:18,ticker:'IOLCAMA',name:'IOL Cash Management',tipo:'FCI',cantidad:192186.6169,precioCompra:11.41,precioActual:11.505701,varDia:0.22},
   {id:19,ticker:'IOLDOLD',name:'IOL Dólar Ahorro Plus',tipo:'FCI',cantidad:22.6467,precioCompra:1.08,precioActual:1.082355,varDia:0.11},
 ];
@@ -500,7 +500,7 @@ const newsData=[
   {title:'Merval sube 2.1% impulsado por energía y finanzas',source:'Bloomberg Ar',desc:'YPF y Banco Galicia lideran las subas. El índice avanzó 2.1% en la primera hora.',time:'Hace 45 min',cat:'argentina',url:'https://www.bloomberg.com'},
   {title:'Fed en foco: mercado descuenta pausa en tasas para junio',source:'Reuters',desc:'Futuros sobre tasas muestran 94% de probabilidad de que la tasa se mantenga estable.',time:'Hace 1 hora',cat:'macro',url:'https://www.reuters.com'},
   {title:'Bitcoin supera los USD 105.000 y vuelve a zona de máximos',source:'CoinDesk',desc:'El criptoactivo recuperó terreno apoyado en flujos institucionales.',time:'Hace 2 horas',cat:'crypto',url:'https://www.coindesk.com'},
-  {title:'Riesgo país argentino cae a 1.420 pb, mínimo desde 2018',source:'‘Ambito',desc:'Compresión de spreads soberanos refleja mejoras en reservas del BCRA.',time:'Hace 2 horas',cat:'argentina',url:'https://www.ambito.com'},
+  {title:'Riesgo país argentino cae a 1.420 pb, mínimo desde 2018',source:'Ámbito',desc:'Compresión de spreads soberanos refleja mejoras en reservas del BCRA.',time:'Hace 2 horas',cat:'argentina',url:'https://www.ambito.com'},
   {title:'S&P 500 cierra en máximos: tecnología lidera rally de fin de mes',source:'WSJ',desc:'El índice terminó mayo con ganancia del 4.8%, el mejor mes del año.',time:'Hace 3 horas',cat:'global',url:'https://www.wsj.com'},
   {title:'YPF: analistas elevan precio objetivo tras resultados Q1',source:'Infobae',desc:'Ganancias netas de USD 380M en Q1, superando estimaciones. ADRs +5.2%.',time:'Hace 4 horas',cat:'acciones',url:'https://www.infobae.com'},
   {title:'Dólar blue sin cambios: se mantiene en $1.270',source:'El Cronista',desc:'El CCL opera en $1.285 con escasa volatilidad en el inicio del mes.',time:'Hace 5 horas',cat:'argentina',url:'https://www.cronista.com'},
@@ -528,10 +528,10 @@ function renderNews(){
   </a>`).join('');
 }
 
-// ========= MARKETT TICKERS =========
+// ========= MARKET TICKERS =========
 async function fetchMarket(){
   try{
-    const r=await fex'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
+    const r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
     if(r.ok){const d=await r.json();if(d.bitcoin){setT('btc','$'+Math.round(d.bitcoin.usd).toLocaleString(),d.bitcoin.usd_24h_change||0);}}
   }catch(e){}
   // Simulated
