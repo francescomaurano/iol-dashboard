@@ -58,7 +58,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .pos-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .pos-ticker{background:#0f3460;color:var(--blue);font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;letter-spacing:.3px}
 .pos-tipo{font-size:10px;color:var(--muted);background:var(--s2);padding:3px 7px;border-radius:5px}
-.pos-name{font-size:12px;color:var(--dim);margin-bottom:8px;white-space:nowraw;overflow:hidden;text-overflow:ellipsis}
+.pos-name{font-size:12px;color:var(--dim);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pos-nums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
 .pos-num{background:var(--s2);border-radius:8px;padding:8px;text-align:center}
 .pos-num-label{font-size:9px;color:var(--muted);text-transform:uppercase;margin-bottom:3px;letter-spacing:.4px}
@@ -335,27 +335,27 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 </div>
 
 <script>
-// ========= DATA IOL — actualizado 15/06/2026 10:30 =========
+// ========= DATA IOL — actualizado 18/06/2026 10:30 =========
 const IOL_POSITIONS = [
-  {id:1,ticker:'YPFD',name:'YPF',tipo:'Acción',cantidad:22,precioCompra:81500,precioActual:83625,varDia:-0.08},
-  {id:2,ticker:'NVDA',name:'Cedear Nvidia Corporation',tipo:'CEDEAR',cantidad:122,precioCompra:13960,precioActual:12810,varDia:0.23},
-  {id:3,ticker:'MSFT',name:'Cedear Microsoft Corp.',tipo:'CEDEAR',cantidad:24,precioCompra:22940,precioActual:19490,varDia:0.15},
-  {id:4,ticker:'AAPL',name:'Cedear Apple Inc.',tipo:'CEDEAR',cantidad:23,precioCompra:22950,precioActual:21780,varDia:-1.22},
-  {id:5,ticker:'AMZN',name:'Cedear Amazon.Com, Inc',tipo:'CEDEAR',cantidad:129,precioCompra:2705,precioActual:2486,varDia:-1.05},
-  {id:6,ticker:'PAMP',name:'Pampa Energía',tipo:'Acción',cantidad:61,precioCompra:5245,precioActual:5300,varDia:-0.09},
-  {id:7,ticker:'META',name:'Cedear Facebook, Inc.',tipo:'CEDEAR',cantidad:6,precioCompra:37400,precioActual:35360,varDia:-0.07},
-  {id:8,ticker:'MELI',name:'Cedear Mercadolibre Inc.',tipo:'CEDEAR',cantidad:10,precioCompra:21530,precioActual:19860,varDia:-1.24},
-  {id:9,ticker:'SPHQ',name:'CEDEAR INVERSCO S&P 500 QUALITY ETF',tipo:'CEDEAR',cantidad:27,precioCompra:9045,precioActual:9355,varDia:1.13},
-  {id:10,ticker:'MCD',name:"Cedear Mcdonald's Corporation",tipo:'CEDEAR',cantidad:12,precioCompra:17210,precioActual:17790,varDia:0},
-  {id:11,ticker:'V',name:'Cedear Visa Inc',tipo:'CEDEAR',cantidad:7,precioCompra:26740,precioActual:26840,varDia:0.97},
-  {id:12,ticker:'B',name:'Cedear Barrick Mining Corporation',tipo:'CEDEAR',cantidad:4,precioCompra:31600,precioActual:30040,varDia:2.8},
-  {id:13,ticker:'BABA',name:'Cedear Alibaba Group Holding L',tipo:'CEDEAR',cantidad:6,precioCompra:20840,precioActual:18780,varDia:0.32},
-  {id:14,ticker:'PAAS',name:'Cedear Pan American Silver Cor',tipo:'CEDEAR',cantidad:4,precioCompra:27580,precioActual:24080,varDia:4.06},
-  {id:15,ticker:'HMY',name:'Cedear Harmony Gold Mining Co',tipo:'CEDEAR',cantidad:4,precioCompra:26320,precioActual:23770,varDia:4.39},
-  {id:16,ticker:'BIDU',name:'Cedear Baidu, Inc.',tipo:'CEDEAR',cantidad:4,precioCompra:17890,precioActual:15730,varDia:0.06},
-  {id:17,ticker:'JD',name:'Cedear Jd.Com, Inc.',tipo:'CEDEAR',cantidad:2,precioCompra:10850,precioActual:10720,varDia:1.99},
-  {id:18,ticker:'IOLCAMA',name:'IOL Cash Management',tipo:'FCI',cantidad:192186.6169,precioCompra:11.41,precioActual:11.505701,varDia:0.22},
-  {id:19,ticker:'IOLDOLD',name:'IOL Dólar Ahorro Plus',tipo:'FCI',cantidad:22.6467,precioCompra:1.08,precioActual:1.082355,varDia:0.11},
+  {id:1,ticker:'MCD',name:"Cedear Mcdonald's Corporation",tipo:'CEDEAR',cantidad:12,precioCompra:17210,precioActual:17710,varDia:-0.67},
+  {id:2,ticker:'MSFT',name:'Cedear Microsoft Corp.',tipo:'CEDEAR',cantidad:24,precioCompra:22940,precioActual:19010,varDia:0.1},
+  {id:3,ticker:'PAMP',name:'Pampa Energía',tipo:'Acción',cantidad:61,precioCompra:5245,precioActual:5240,varDia:1.64},
+  {id:4,ticker:'YPFD',name:'YPF',tipo:'Acción',cantidad:12,precioCompra:81500,precioActual:76300,varDia:-0.48},
+  {id:5,ticker:'MELI',name:'Cedear Mercadolibre Inc.',tipo:'CEDEAR',cantidad:10,precioCompra:21530,precioActual:20540,varDia:0.24},
+  {id:6,ticker:'AAPL',name:'Cedear Apple Inc.',tipo:'CEDEAR',cantidad:23,precioCompra:22950,precioActual:22380,varDia:0.67},
+  {id:7,ticker:'B',name:'Cedear Barrick Mining Corporation',tipo:'CEDEAR',cantidad:4,precioCompra:31600,precioActual:30260,varDia:-3.01},
+  {id:8,ticker:'HMY',name:'Cedear Harmony Gold Mining Co',tipo:'CEDEAR',cantidad:4,precioCompra:26320,precioActual:25520,varDia:-1},
+  {id:9,ticker:'META',name:'Cedear Facebook, Inc.',tipo:'CEDEAR',cantidad:6,precioCompra:37400,precioActual:36240,varDia:1.62},
+  {id:10,ticker:'AMZN',name:'Cedear Amazon.Com, Inc',tipo:'CEDEAR',cantidad:129,precioCompra:2705,precioActual:2552.5,varDia:2.71},
+  {id:11,ticker:'NVDA',name:'Cedear Nvidia Corporation',tipo:'CEDEAR',cantidad:122,precioCompra:13960,precioActual:13180,varDia:2.8},
+  {id:12,ticker:'V',name:'Cedear Visa Inc',tipo:'CEDEAR',cantidad:7,precioCompra:26740,precioActual:27620,varDia:-0.21},
+  {id:13,ticker:'BIDU',name:'Cedear Baidu, Inc.',tipo:'CEDEAR',cantidad:4,precioCompra:17890,precioActual:15200,varDia:-0.45},
+  {id:14,ticker:'BABA',name:'Cedear Alibaba Group Holding L',tipo:'CEDEAR',cantidad:6,precioCompra:20840,precioActual:17770,varDia:-1.38},
+  {id:15,ticker:'JD',name:'Cedear Jd.Com, Inc.',tipo:'CEDEAR',cantidad:2,precioCompra:10850,precioActual:10420,varDia:-0.76},
+  {id:16,ticker:'PAAS',name:'Cedear Pan American Silver Cor',tipo:'CEDEAR',cantidad:4,precioCompra:27580,precioActual:24710,varDia:-3.09},
+  {id:17,ticker:'IOLCAMA',name:'IOL Cash Management',tipo:'FCI',cantidad:259900.6628,precioCompra:11.41,precioActual:11.516535,varDia:0.06},
+  {id:18,ticker:'IOLDOLD',name:'IOL Dólar Ahorro Plus',tipo:'FCI',cantidad:22.6467,precioCompra:1.08,precioActual:1.081311,varDia:0.01},
+  {id:19,ticker:'SPHQ',name:'CEDEAR INVERSCO S&P 500 QUALITY ETF',tipo:'CEDEAR',cantidad:27,precioCompra:9045,precioActual:9620,varDia:1.15},
 ];
 
 // ========= STATE =========
